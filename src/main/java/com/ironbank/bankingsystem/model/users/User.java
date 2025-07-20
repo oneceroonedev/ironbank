@@ -9,7 +9,8 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @Entity
-@Inheritance(strategy = InheritanceType.JOINED) // Soporta subclases en JPA
+@Inheritance(strategy = InheritanceType.JOINED) // Supports subclasses in JPA
+@DiscriminatorColumn(name = "user_type")
 public abstract class User {
 
     @Id
@@ -23,11 +24,11 @@ public abstract class User {
     private String username;
 
     @Column(nullable = false)
-    private String password; // Necesario para login
+    private String password; // Required for login
 
     private LocalDate birthDate;
 
-    // --- Constructors ---
+    // Constructors
 
     public User() {}
 

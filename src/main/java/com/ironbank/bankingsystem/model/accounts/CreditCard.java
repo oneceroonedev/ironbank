@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
 
 @Entity
@@ -47,6 +48,17 @@ public class CreditCard extends Account {
             this.interestRate = interestRate;
         } else {
             throw new IllegalArgumentException("Interest rate cannot be less than 0.1");
+        }
+    }
+
+    public void applyInterest() {
+        LocalDate now = LocalDate.now();
+
+        if (lastInterestAppliedDate == null || lastInterestAppliedDate.plusMonths(1).isBefore(now)) {
+            BigDecimal monthlyRate = interestRate.divide(new BigDecimal("12"), 10, RoundingMode.HALF_UP);
+            BigDecimal interest = getBalance().multiply(monthlyRate);
+            setBalance(getBalance().add(interest));
+            lastInterestAppliedDate = now;
         }
     }
 }

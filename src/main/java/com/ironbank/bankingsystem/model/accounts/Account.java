@@ -17,6 +17,7 @@ import java.util.Objects;
 @Getter
 public abstract class Account {
 
+    @Setter
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

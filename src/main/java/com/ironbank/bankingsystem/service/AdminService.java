@@ -21,6 +21,7 @@ public class AdminService {
     private final AccountRepository accountRepository;
     private final UserRepository userRepository;
     private final AccountHolderRepository accountHolderRepository;
+    private final AccountFactoryService accountFactoryService;
 
     public BigDecimal getAccountBalance(Long accountId) {
         Account account = accountRepository.findById(accountId)
@@ -47,14 +48,13 @@ public class AdminService {
         }
 
         Account account;
+
         switch (dto.getAccountType().toUpperCase()) {
-            case "CHECKING" -> account = new CheckingAccount(
-                    dto.getBalance(),
-                    dto.getSecretKey(),
-                    primary,
-                    secondary,
-                    AccountStatus.ACTIVE
-            );
+            case "CHECKING" -> {
+                account = accountFactoryService.createCheckingOrStudentAccount(
+                        dto.getBalance(), dto.getSecretKey(), primary, secondary);
+                account.setStatus(AccountStatus.ACTIVE);
+            }
             case "SAVINGS" -> account = new Savings(
                     dto.getBalance(),
                     dto.getSecretKey(),
@@ -63,13 +63,6 @@ public class AdminService {
                     AccountStatus.ACTIVE,
                     dto.getInterestRate(),
                     dto.getMinimumBalance()
-            );
-            case "STUDENT" -> account = new StudentChecking(
-                    dto.getBalance(),
-                    dto.getSecretKey(),
-                    primary,
-                    secondary,
-                    AccountStatus.ACTIVE
             );
             case "CREDIT" -> account = new CreditCard(
                     dto.getBalance(),

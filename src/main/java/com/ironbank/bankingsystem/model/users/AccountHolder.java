@@ -12,6 +12,7 @@ import java.time.LocalDate;
 @Getter
 @Setter
 @NoArgsConstructor
+@PrimaryKeyJoinColumn(name = "id")
 public class AccountHolder extends User {
 
     @Embedded
@@ -42,5 +43,12 @@ public class AccountHolder extends User {
         super(name, username, password, birthDate);
         this.primaryAddress = primaryAddress;
         this.mailingAddress = mailingAddress;
+    }
+
+    public int getAge() {
+        if (getBirthDate() == null) {
+            return 0;
+        }
+        return java.time.Period.between(getBirthDate(), LocalDate.now()).getYears();
     }
 }

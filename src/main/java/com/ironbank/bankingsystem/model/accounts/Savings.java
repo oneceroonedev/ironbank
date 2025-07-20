@@ -49,4 +49,14 @@ public class Savings extends Account {
             throw new IllegalArgumentException("Minimum balance cannot be lower than 100");
         }
     }
+
+    public void applyInterest() {
+        LocalDate now = LocalDate.now();
+
+        if (lastInterestAppliedDate == null || lastInterestAppliedDate.plusYears(1).isBefore(now)) {
+            BigDecimal interest = getBalance().multiply(interestRate);
+            setBalance(getBalance().add(interest));
+            lastInterestAppliedDate = now;
+        }
+    }
 }
