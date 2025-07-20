@@ -22,7 +22,7 @@ public class DataInitializer {
             // Create an AccountHolder
             AccountHolder user1 = new AccountHolder();
             user1.setName("Alice");
-            user1.setDateOfBirth(LocalDate.of(1990, 1, 1));
+            user1.setBirthDate(LocalDate.of(1990, 1, 1));
             user1.setUsername("alice234");
 
             accountHolderRepo.save(user1);

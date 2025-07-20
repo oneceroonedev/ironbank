@@ -1,7 +1,7 @@
 package com.ironbank.bankingsystem.model.accounts;
 
-import com.ironbank.bankingsystem.model.users.AccountHolder;
 import com.ironbank.bankingsystem.model.enums.AccountStatus;
+import com.ironbank.bankingsystem.model.users.AccountHolder;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -11,8 +11,10 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
 
+@Entity
+@Inheritance(strategy = InheritanceType.JOINED)
+@DiscriminatorColumn(name = "account_type")
 @Getter
-@MappedSuperclass
 public abstract class Account {
 
     @Id
@@ -31,7 +33,7 @@ public abstract class Account {
 
     @NotNull
     @Column(nullable = false)
-    private LocalDate creationDate = LocalDate.now(); // Initialize directly here
+    private LocalDate creationDate;
 
     @Setter
     @NotNull
@@ -49,21 +51,35 @@ public abstract class Account {
     @JoinColumn(name = "secondary_owner_id")
     private AccountHolder secondaryOwner;
 
-    // --- Constructors ---
+    // Default constructor
     public Account() {
-        this.status = AccountStatus.ACTIVE;  // Default status
+        this.creationDate = LocalDate.now();
+        this.status = AccountStatus.ACTIVE;
     }
 
-    public Account(@NotNull BigDecimal balance, @NotNull String secretKey, @NotNull AccountHolder primaryOwner,
-                   AccountHolder secondaryOwner, AccountStatus status) {
+    // Full constructor with explicit status
+    public Account(@NotNull BigDecimal balance,
+                   @NotNull String secretKey,
+                   @NotNull AccountHolder primaryOwner,
+                   AccountHolder secondaryOwner,
+                   @NotNull AccountStatus status) {
         this.balance = balance;
         this.secretKey = secretKey;
         this.primaryOwner = primaryOwner;
         this.secondaryOwner = secondaryOwner;
         this.status = status;
+        this.creationDate = LocalDate.now();
     }
 
-    // --- equals and hashCode based on id ---
+    // Constructor with default status ACTIVE
+    public Account(@NotNull BigDecimal balance,
+                   @NotNull String secretKey,
+                   @NotNull AccountHolder primaryOwner,
+                   AccountHolder secondaryOwner) {
+        this(balance, secretKey, primaryOwner, secondaryOwner, AccountStatus.ACTIVE);
+    }
+
+    // Equals and hashCode based on id
 
     @Override
     public boolean equals(Object o) {
